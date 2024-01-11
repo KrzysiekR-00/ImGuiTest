@@ -16,7 +16,7 @@ find_package(imgui CONFIG REQUIRED)
 # Add source to this project's executable.
 add_executable (Project01 "Project01.cpp" "Project01.h" "imgui_impl_dx12.cpp" "imgui_impl_dx12.h" "imgui_impl_win32.h" "imgui_impl_win32.cpp")
 
-target_link_libraries(Project01 PRIVATE imgui::imgui)
+target_link_libraries(Project01 PRIVATE imgui::imgui d3d12.lib dxgi.lib)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Project01 PROPERTY CXX_STANDARD 20)
