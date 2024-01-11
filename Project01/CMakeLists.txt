@@ -14,7 +14,7 @@ project ("Project01")
 find_package(imgui CONFIG REQUIRED)
 
 # Add source to this project's executable.
-add_executable (Project01 "Project01.cpp" "Project01.h")
+add_executable (Project01 "Project01.cpp" "Project01.h" "imgui_impl_dx12.cpp" "imgui_impl_dx12.h" "imgui_impl_win32.h" "imgui_impl_win32.cpp")
 
 target_link_libraries(Project01 PRIVATE imgui::imgui)
 
