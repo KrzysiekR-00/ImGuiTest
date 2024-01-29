@@ -42,6 +42,8 @@
 #include <dxgidebug.h>
 #pragma comment(lib, "dxguid.lib")
 #endif
+#include <string>
+#include <algorithm>
 
 struct FrameContext
 {
@@ -77,6 +79,65 @@ void WaitForLastSubmittedFrame();
 FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void HelpMarker(const char* desc);
+
+class Handler {
+public:
+    virtual Handler* SetNext(Handler* handler) = 0;
+    virtual bool Handle(std::string request) = 0;
+};
+
+class AbstractHandler : public Handler {
+private:
+    Handler* next_handler_;
+
+public:
+    AbstractHandler() : next_handler_(nullptr) {
+    }
+    Handler* SetNext(Handler* handler) override {
+        this->next_handler_ = handler;
+        return handler;
+    }
+    bool Handle(std::string request) override {
+        if (this->next_handler_) {
+            return this->next_handler_->Handle(request);
+        }
+
+        //return {};
+        return true;
+    }
+};
+
+class LengthVerificator : public AbstractHandler {
+public:
+    bool Handle(std::string password) override {
+        if (password.length() < 12) return false;
+        else return AbstractHandler::Handle(password);
+    }
+};
+
+class UppercaseLetterVerificator : public AbstractHandler {
+public:
+    bool Handle(std::string password) override {
+        if (!std::any_of(password.begin(), password.end(), isupper)) return false;
+        else return AbstractHandler::Handle(password);
+    }
+};
+
+class StrongPasswordVerificator
+{
+public:
+    StrongPasswordVerificator()
+    {
+
+    }
+    bool IsStrongPassword(std::string password)
+    {
+        LengthVerificator* lengthVerificator = new LengthVerificator;
+        UppercaseLetterVerificator* uppercaseLetterVerificator = new UppercaseLetterVerificator;
+        lengthVerificator->SetNext(uppercaseLetterVerificator);
+        return lengthVerificator->Handle(password);
+    }
+};
 
 // Main code
 int main(int, char**)
@@ -227,7 +288,11 @@ int main(int, char**)
 
             if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
             {
-                result = "Ok";
+                StrongPasswordVerificator* strongPasswordVerificator = new StrongPasswordVerificator;
+                auto verificationResult = strongPasswordVerificator->IsStrongPassword(str1);
+
+                if (verificationResult) result = "Ok";
+                else result = "Not ok";
             }
             ImGui::SameLine();
             ImGui::Text(result);
