@@ -1,21 +1,4 @@
-﻿//// Project01.cpp : Defines the entry point for the application.
-////
-//
-//#include "Project01.h"
-//#include <iostream>
-//#include "imgui.h"
-//using namespace std;
-//
-//using namespace std;
-//
-//int main()
-//{
-//	cout << "Hello CMake." << endl;
-//	cout << IMGUI_CHECKVERSION() << endl;
-//	return 0;
-//}
-
-// Dear ImGui: standalone example application for DirectX 12
+﻿// Dear ImGui: standalone example application for DirectX 12
 
 // Learn about Dear ImGui:
 // - FAQ                  https://dearimgui.com/faq
@@ -80,20 +63,20 @@ FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void HelpMarker(const char* desc);
 
-class Handler {
+class PasswordVerificationHandler {
 public:
-    virtual Handler* SetNext(Handler* handler) = 0;
+    virtual PasswordVerificationHandler* SetNext(PasswordVerificationHandler* handler) = 0;
     virtual bool Handle(std::string request) = 0;
 };
 
-class AbstractHandler : public Handler {
+class PasswordVerificationAbstractHandler : public PasswordVerificationHandler {
 private:
-    Handler* next_handler_;
+    PasswordVerificationHandler* next_handler_;
 
 public:
-    AbstractHandler() : next_handler_(nullptr) {
+    PasswordVerificationAbstractHandler() : next_handler_(nullptr) {
     }
-    Handler* SetNext(Handler* handler) override {
+    PasswordVerificationHandler* SetNext(PasswordVerificationHandler* handler) override {
         this->next_handler_ = handler;
         return handler;
     }
@@ -107,19 +90,19 @@ public:
     }
 };
 
-class LengthVerificator : public AbstractHandler {
+class LengthVerificator : public PasswordVerificationAbstractHandler {
 public:
     bool Handle(std::string password) override {
         if (password.length() < 12) return false;
-        else return AbstractHandler::Handle(password);
+        else return PasswordVerificationAbstractHandler::Handle(password);
     }
 };
 
-class UppercaseLetterVerificator : public AbstractHandler {
+class UppercaseLetterVerificator : public PasswordVerificationAbstractHandler {
 public:
     bool Handle(std::string password) override {
         if (!std::any_of(password.begin(), password.end(), isupper)) return false;
-        else return AbstractHandler::Handle(password);
+        else return PasswordVerificationAbstractHandler::Handle(password);
     }
 };
 
@@ -234,8 +217,8 @@ int main(int, char**)
 
             ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-            static char str1[128] = "";
-            ImGui::InputTextWithHint("input text (w/ hint)", "enter text here", str1, IM_ARRAYSIZE(str1));
+            static char password[128] = "";
+            ImGui::InputTextWithHint("input text (w/ hint)", "enter text here", password, IM_ARRAYSIZE(password));
 
             //
             //
@@ -289,10 +272,10 @@ int main(int, char**)
             if (ImGui::Button("Button")) // Buttons return true when clicked (most widgets return true when edited/activated)
             {
                 StrongPasswordVerificator* strongPasswordVerificator = new StrongPasswordVerificator;
-                auto verificationResult = strongPasswordVerificator->IsStrongPassword(str1);
+                auto verificationResult = strongPasswordVerificator->IsStrongPassword(password);
 
-                if (verificationResult) result = "Ok";
-                else result = "Not ok";
+                if (verificationResult) result = "Strong password";
+                else result = "Weak password";
             }
             ImGui::SameLine();
             ImGui::Text(result);
