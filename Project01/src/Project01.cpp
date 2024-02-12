@@ -106,6 +106,30 @@ public:
     }
 };
 
+class LowercaseLetterVerificator : public PasswordVerificationAbstractHandler {
+public:
+    bool Handle(std::string password) override {
+        if (!std::any_of(password.begin(), password.end(), islower)) return false;
+        else return PasswordVerificationAbstractHandler::Handle(password);
+    }
+};
+
+class DigitVerificator : public PasswordVerificationAbstractHandler {
+public:
+    bool Handle(std::string password) override {
+        if (!std::any_of(password.begin(), password.end(), isdigit)) return false;
+        else return PasswordVerificationAbstractHandler::Handle(password);
+    }
+};
+
+class SpecialCharVerificator : public PasswordVerificationAbstractHandler {
+public:
+    bool Handle(std::string password) override {
+        if (!std::any_of(password.begin(), password.end(), [](unsigned char ch) { return !isalnum(ch); })) return false;
+        else return PasswordVerificationAbstractHandler::Handle(password);
+    }
+};
+
 class StrongPasswordVerificator
 {
 public:
@@ -117,7 +141,15 @@ public:
     {
         LengthVerificator* lengthVerificator = new LengthVerificator;
         UppercaseLetterVerificator* uppercaseLetterVerificator = new UppercaseLetterVerificator;
+        LowercaseLetterVerificator* lowercaseLetterVerificator = new LowercaseLetterVerificator;
+        DigitVerificator* digitVerificator = new DigitVerificator;
+        SpecialCharVerificator* specialCharVerificator = new SpecialCharVerificator;
+
         lengthVerificator->SetNext(uppercaseLetterVerificator);
+        uppercaseLetterVerificator->SetNext(lowercaseLetterVerificator);
+        lowercaseLetterVerificator->SetNext(digitVerificator);
+        digitVerificator->SetNext(specialCharVerificator);
+
         return lengthVerificator->Handle(password);
     }
 };
