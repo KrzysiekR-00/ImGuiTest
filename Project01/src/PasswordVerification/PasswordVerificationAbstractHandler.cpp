@@ -13,7 +13,8 @@ PasswordVerificationHandler* PasswordVerificationAbstractHandler::SetNext(Passwo
 
 bool PasswordVerificationAbstractHandler::Handle(std::string request) 
 {
-    if (this->next_handler_) {
+    if (this->next_handler_) 
+    {
         return this->next_handler_->Handle(request);
     }
 
