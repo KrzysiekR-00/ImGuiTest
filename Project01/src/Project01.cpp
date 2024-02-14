@@ -11,6 +11,7 @@
 // This define is set in the example .vcxproj file and need to be replicated in your app or by adding it to your imconfig.h file.
 
 #include "imgui.h"
+#include "PasswordVerification/StrongPasswordVerificator.h"
 #include "../external/imgui/imgui_impl_win32.h"
 #include "../external/imgui/imgui_impl_dx12.h"
 #include <d3d12.h>
@@ -26,7 +27,6 @@
 #pragma comment(lib, "dxguid.lib")
 #endif
 #include <string>
-#include <algorithm>
 
 struct FrameContext
 {
@@ -62,97 +62,6 @@ void WaitForLastSubmittedFrame();
 FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void HelpMarker(const char* desc);
-
-class PasswordVerificationHandler {
-public:
-    virtual PasswordVerificationHandler* SetNext(PasswordVerificationHandler* handler) = 0;
-    virtual bool Handle(std::string request) = 0;
-};
-
-class PasswordVerificationAbstractHandler : public PasswordVerificationHandler {
-private:
-    PasswordVerificationHandler* next_handler_;
-
-public:
-    PasswordVerificationAbstractHandler() : next_handler_(nullptr) {
-    }
-    PasswordVerificationHandler* SetNext(PasswordVerificationHandler* handler) override {
-        this->next_handler_ = handler;
-        return handler;
-    }
-    bool Handle(std::string request) override {
-        if (this->next_handler_) {
-            return this->next_handler_->Handle(request);
-        }
-
-        //return {};
-        return true;
-    }
-};
-
-class LengthVerificator : public PasswordVerificationAbstractHandler {
-public:
-    bool Handle(std::string password) override {
-        if (password.length() < 12) return false;
-        else return PasswordVerificationAbstractHandler::Handle(password);
-    }
-};
-
-class UppercaseLetterVerificator : public PasswordVerificationAbstractHandler {
-public:
-    bool Handle(std::string password) override {
-        if (!std::any_of(password.begin(), password.end(), isupper)) return false;
-        else return PasswordVerificationAbstractHandler::Handle(password);
-    }
-};
-
-class LowercaseLetterVerificator : public PasswordVerificationAbstractHandler {
-public:
-    bool Handle(std::string password) override {
-        if (!std::any_of(password.begin(), password.end(), islower)) return false;
-        else return PasswordVerificationAbstractHandler::Handle(password);
-    }
-};
-
-class DigitVerificator : public PasswordVerificationAbstractHandler {
-public:
-    bool Handle(std::string password) override {
-        if (!std::any_of(password.begin(), password.end(), isdigit)) return false;
-        else return PasswordVerificationAbstractHandler::Handle(password);
-    }
-};
-
-class SpecialCharVerificator : public PasswordVerificationAbstractHandler {
-public:
-    bool Handle(std::string password) override {
-        if (!std::any_of(password.begin(), password.end(), [](unsigned char ch) { return !isalnum(ch); })) return false;
-        else return PasswordVerificationAbstractHandler::Handle(password);
-    }
-};
-
-class StrongPasswordVerificator
-{
-public:
-    StrongPasswordVerificator()
-    {
-
-    }
-    bool IsStrongPassword(std::string password)
-    {
-        LengthVerificator* lengthVerificator = new LengthVerificator;
-        UppercaseLetterVerificator* uppercaseLetterVerificator = new UppercaseLetterVerificator;
-        LowercaseLetterVerificator* lowercaseLetterVerificator = new LowercaseLetterVerificator;
-        DigitVerificator* digitVerificator = new DigitVerificator;
-        SpecialCharVerificator* specialCharVerificator = new SpecialCharVerificator;
-
-        lengthVerificator->SetNext(uppercaseLetterVerificator);
-        uppercaseLetterVerificator->SetNext(lowercaseLetterVerificator);
-        lowercaseLetterVerificator->SetNext(digitVerificator);
-        digitVerificator->SetNext(specialCharVerificator);
-
-        return lengthVerificator->Handle(password);
-    }
-};
 
 // Main code
 int main(int, char**)
