@@ -14,7 +14,7 @@ project ("Project01")
 find_package(imgui CONFIG REQUIRED)
 
 # Add source to this project's executable.
-add_executable (Project01 "src/Project01.cpp" "src/Project01.h" "external/imgui/imgui_impl_dx12.cpp" "external/imgui/imgui_impl_dx12.h" "external/imgui/imgui_impl_win32.h" "external/imgui/imgui_impl_win32.cpp" "src/PasswordVerification/PasswordVerificationHandler.h" "src/PasswordVerification/PasswordVerificationAbstractHandler.h" "src/PasswordVerification/PasswordVerificationAbstractHandler.cpp" "src/PasswordVerification/LengthVerificator.h" "src/PasswordVerification/UppercaseLetterVerificator.h" "src/PasswordVerification/LowercaseLetterVerificator.h" "src/PasswordVerification/DigitVerificator.h" "src/PasswordVerification/SpecialCharVerificator.h" "src/PasswordVerification/StrongPasswordVerificator.h" "src/PasswordVerification/StrongPasswordVerificator.cpp" "src/PasswordVerification/SpecialCharVerificator.cpp" "src/PasswordVerification/DigitVerificator.cpp" "src/PasswordVerification/LowercaseLetterVerificator.cpp" "src/PasswordVerification/UppercaseLetterVerificator.cpp" "src/PasswordVerification/LengthVerificator.cpp" "src/test.cpp")
+add_executable (Project01 "src/Project01.cpp" "src/Project01.h" "external/imgui/imgui_impl_dx12.cpp" "external/imgui/imgui_impl_dx12.h" "external/imgui/imgui_impl_win32.h" "external/imgui/imgui_impl_win32.cpp" "src/PasswordVerification/PasswordVerificationHandler.h" "src/PasswordVerification/PasswordVerificationAbstractHandler.h" "src/PasswordVerification/PasswordVerificationAbstractHandler.cpp" "src/PasswordVerification/LengthVerificator.h" "src/PasswordVerification/UppercaseLetterVerificator.h" "src/PasswordVerification/LowercaseLetterVerificator.h" "src/PasswordVerification/DigitVerificator.h" "src/PasswordVerification/SpecialCharVerificator.h" "src/PasswordVerification/StrongPasswordVerificator.h" "src/PasswordVerification/StrongPasswordVerificator.cpp" "src/PasswordVerification/SpecialCharVerificator.cpp" "src/PasswordVerification/DigitVerificator.cpp" "src/PasswordVerification/LowercaseLetterVerificator.cpp" "src/PasswordVerification/UppercaseLetterVerificator.cpp" "src/PasswordVerification/LengthVerificator.cpp")
 
 target_link_libraries(Project01 PRIVATE imgui::imgui d3d12.lib dxgi.lib)
 
@@ -23,11 +23,12 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 project ("Project01Tests")
+
 find_package(GTest CONFIG REQUIRED)
-add_executable (Project01Tests "src/test.cpp")
+
+add_executable (Project01Tests "src/PasswordVerification/PasswordVerificationHandler.h" "src/PasswordVerification/PasswordVerificationAbstractHandler.h" "src/PasswordVerification/PasswordVerificationAbstractHandler.cpp" "src/PasswordVerification/LengthVerificator.h" "src/PasswordVerification/UppercaseLetterVerificator.h" "src/PasswordVerification/LowercaseLetterVerificator.h" "src/PasswordVerification/DigitVerificator.h" "src/PasswordVerification/SpecialCharVerificator.h" "src/PasswordVerification/StrongPasswordVerificator.h" "src/PasswordVerification/StrongPasswordVerificator.cpp" "src/PasswordVerification/SpecialCharVerificator.cpp" "src/PasswordVerification/DigitVerificator.cpp" "src/PasswordVerification/LowercaseLetterVerificator.cpp" "src/PasswordVerification/UppercaseLetterVerificator.cpp" "src/PasswordVerification/LengthVerificator.cpp" "tests/testsMain.cpp" "tests/PasswordVerification/DigitVerificator.test.cpp" "tests/PasswordVerification/LengthVerificator.test.cpp" "tests/PasswordVerification/LowercaseLetterVerificator.test.cpp"  "tests/PasswordVerification/SpecialCharVerificator.test.cpp" "tests/PasswordVerification/StrongPasswordVerificator.test.cpp" "tests/PasswordVerification/UppercaseLetterVerificator.test.cpp")
+
 target_link_libraries(
   Project01Tests
   GTest::gtest_main
 )
-#include(GoogleTest)
-#gtest_discover_tests(hello_test)
