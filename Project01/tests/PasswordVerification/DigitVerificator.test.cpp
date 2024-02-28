@@ -13,7 +13,7 @@ TEST(DigitVerificatorTest, ValidInputReturnsTrue)
 
 TEST(DigitVerificatorTest, InvalidInputReturnsFalse)
 {
-	std::string password = "";
+	std::string password = "a";
 
 	DigitVerificator* verificator = new DigitVerificator;
 	auto result = verificator->Handle(password);
