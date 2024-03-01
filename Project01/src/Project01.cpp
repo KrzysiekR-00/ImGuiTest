@@ -119,8 +119,19 @@ int main(int, char**)
             
             //ImGui::ShowDemoWindow();
 
+            if (ImGui::CollapsingHeader("Help"))
+            {
+                ImGui::SeparatorText("Requirements");
+                ImGui::BulletText("Contains digit");
+                ImGui::BulletText("Contains lowercase letter");
+                ImGui::BulletText("Contains uppercase letter");
+                ImGui::BulletText("Contains special char");
+                ImGui::BulletText("At least 12 characters long");
+            }
+
+            ImGui::SeparatorText("Verificator");
             static char password[128] = "";
-            ImGui::InputTextWithHint("##a", "Enter password here", password, IM_ARRAYSIZE(password));
+            ImGui::InputTextWithHint("##", "Enter password here", password, IM_ARRAYSIZE(password));
             ImGui::SameLine();
             HelpMarker("Password to verify");
 
