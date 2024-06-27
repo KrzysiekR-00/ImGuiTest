@@ -18,6 +18,5 @@ bool PasswordVerificationAbstractHandler::Handle(std::string request)
         return this->next_handler_->Handle(request);
     }
 
-    //return {};
     return true;
 }
